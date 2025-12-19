@@ -80,7 +80,7 @@ jobs:
             -e PLAYWRIGHT_BASE_URL \
             -v ${{ github.workspace }}:/work \
             -w /work \
-            mcr.microsoft.com/playwright:v1.48.2-jammy \
+            mcr.microsoft.com/playwright:v1.57.0-jammy \
             /bin/bash -lc "npm ci && npx playwright test"
 
       - name: Cleanup containers and network
