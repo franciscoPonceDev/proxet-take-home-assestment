@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { PAGE_SIZE, getTotalPages, paginateItems } from "@/lib/pagination";
 import { useUsersData } from "./useUsersData";
 import { UserCard } from "./UserCard";
@@ -19,12 +19,6 @@ export const DataList = () => {
     () => paginateItems(users, currentPage, PAGE_SIZE),
     [users, currentPage]
   );
-
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
-    }
-  }, [currentPage, totalPages]);
 
   if (isLoading) {
     return (

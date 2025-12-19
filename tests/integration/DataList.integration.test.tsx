@@ -78,7 +78,6 @@ describe("DataList integration", () => {
     );
     expect(userCardsPage1).toHaveLength(PAGE_SIZE);
 
-    const firstUser = mockUsers[0];
     const firstUserFullName = `First1 M Last1`;
     const firstUserJob = `JobTitle1 at Company1`;
     const firstUserAddress =
