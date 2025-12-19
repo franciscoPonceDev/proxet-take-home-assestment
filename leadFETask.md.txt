@@ -1,0 +1,73 @@
+# 💻 Take-Home Challenge: Automated Pagination and API Data Validation
+
+**Estimated Time to Complete:** 3 hours
+
+### 🎯 Objective
+
+The candidate will implement a component that fetches, displays, and correctly paginates a real, large dataset from an external API. They must then implement a robust testing strategy (Unit, Integration, E2E) that specifically validates the **API interaction, pagination logic, and successful data flow** through a containerized and automated CI process.
+
+### 📝 Requirements and Deliverables
+
+The candidate must deliver a Git repository containing the following:
+
+1.  A functional web application component (`<DataList>`).
+2.  The `<DataList>` component must fetch data from the required external API.
+3.  The component must display the data, correctly paginating it (e.g., **20 items per page**).
+4.  Implementation of the full testing spectrum:
+    * Unit/Integration tests for the pagination logic and data fetching logic.
+    * End-to-End (E2E) tests verifying the feature's successful operation.
+5.  A working **`Dockerfile`** that builds and runs the application and the E2E tests.
+6.  A **CI configuration file** (e.g., `.github/workflows/main.yml`, `.gitlab-ci.yml`, etc.) that automates the build and test execution within Docker.
+
+---
+
+### 🚀 The Task: Paginated Product List
+
+#### 1. Data Source
+
+* **API Endpoint:** `https://dummyjson.com/c/81a3-7acb-406a-8571`
+* **Challenge:** This endpoint returns a large list of users. The component must handle the asynchronous fetch and subsequent data processing.
+
+#### 2. Feature Implementation
+
+* **Display Logic:**
+    * The `<DataList>` component must fetch all the data from the API.
+    * It must display the data, paginating it to show **20 items per page**.
+    * **User Experience Requirement:** For each item displayed, the component must present the following information in a clean, user-friendly manner:
+        * **Complete Name**
+        * **Job**
+        * **Address**
+    * It must have functional pagination controls ("Next Page," "Previous Page," or numbered buttons) that correctly navigate through the full dataset.
+
+#### 3. Testing Implementation (The Core Validation)
+
+Candidates must leverage **React Testing Library, Jest/Vitest, and Cypress/Playwright** to validate the following:
+
+| Test Type | Requirement | Validation Target |
+| :--- | :--- | :--- |
+| **Unit Test** | Test the core pagination calculation. | Validate the pure function that determines which items to display based on the current page number and page size, including boundary checks. |
+| **Integration Test** | Test the API interaction and rendering. | **Mock the actual `fetch` call (e.g., using `jest.mock('node-fetch')` or MSW)** to simulate a successful API response and a failure response. Validate the component correctly renders **loading states, success data, and error messages**. Crucially, ensure the formatted product details (Full name, Job, Address) are correctly rendered on the screen. |
+| **E2E Test** | Test the critical user flow. | Use **Cypress or Playwright** to visit the page, assert that the first 20 items are visible, and **verify the presence of a key formatted element** (e.g., the product name). Then, click the "Next Page" button and **assert that the page content has refreshed** to show the next unique set of 20 products (items 21-40). |
+
+#### 4. Infrastructure and CI Implementation
+
+1.  Create a **`Dockerfile`** that successfully builds the frontend application.
+2.  The `Dockerfile` must be configured to allow the E2E tests to run against the running application inside the container environment.
+3.  Create a basic **CI configuration file** (e.g., for GitHub Actions) that executes the following steps:
+    * Build the Docker image.
+    * Run the E2E tests within the container environment.
+
+---
+
+### 💡 Evaluation Criteria
+
+The solution will be evaluated on the quality of implementation in the following areas:
+
+| Skill Area | High Validation (What to look for) |
+| :--- | :--- |
+| **API Handling & Logic** | Correct implementation of data fetching (e.g., custom hooks). Efficient client-side pagination logic. Proper display of loading/error states. |
+| **Testing Expertise** | Effective use of **React Testing Library's** `screen` and user events. Professional, isolated, and fast Unit/Integration tests. Realistic **API mocking** (e.g., MSW or Jest mocks) for integration tests. |
+| **UX & Presentation** | Clear, friendly display of required user details (Full Name, Job, Address). Component design is clean and readable. |
+| **E2E Stability** | Tests are stable and correctly handle asynchronous operations (e.g., waiting for the API fetch and DOM updates) before making assertions. Use of semantic or `data-testid` selectors. |
+| **Docker/Containerization** | Optimized Dockerfile (multi-stage build) for minimal image size. Correct setup for running E2E tests within the container, handling networking/ports correctly. |
+| **CI/Pipeline** | The workflow file is clear, efficient, and successfully executes the build and test process end-to-end without manual intervention. |

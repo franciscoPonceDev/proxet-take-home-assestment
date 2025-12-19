@@ -1,0 +1,53 @@
+## Generate data
+- Go to `https://www.jsongenerator.io/`
+- Paste this JSON schema:
+```json
+{
+  "result": [
+    "repeat(1,2000)",
+    {
+      "phoneNumber": "phoneNumber()",
+      "name": {
+        "first": "firstName()",
+        "middle": "middleName()",
+        "last": "lastName()"
+      },
+      "username": "this.name.first-this.name.last",
+
+      "emails": [
+        "repeat(2)",
+        "email(gmail.com, example.com)"
+      ],
+      "location": {
+        "street": "street()",
+        "city": "city()",
+        "state": "state()",
+        "country": "country()",
+        "zip": "zipCode()",
+        "coordinates": {
+          "latitude": "latitude()",
+          "longitude": "longitude()"
+        }
+      },
+      "job": {
+        "title": "jobTitle()",
+        "descriptor": "jobDescriptor()",
+        "area": "jobArea()",
+        "type": "jobType()",
+        "company": "companyName()"
+      },
+      "creditCard": {
+        "number": "creditCardNumber()",
+        "cvv": "creditCardCVV()",
+        "issuer": "creditCardIssuer()"
+      },
+      "id": "guid()"
+    }
+  ]
+}
+```
+
+## Expose data to the frontend via API
+- Go to `https://dummyjson.com/custom-response`
+- Paste the result of the previous step (a JSON with 2k objects)
+- This will give you a URL like `https://dummyjson.com/c/81a3-7acb-406a-8571` where your data is exposed
