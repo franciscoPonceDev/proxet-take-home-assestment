@@ -1,15 +1,21 @@
 import { defineConfig } from "@playwright/test";
 
+const baseURL =
+  process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000";
+const isCI = Boolean(process.env.CI);
+
 export default defineConfig({
   testDir: "e2e",
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL,
   },
-  webServer: {
-    command: "npm run dev",
-    url: "http://127.0.0.1:3000",
-    reuseExistingServer: !process.env.CI,
-  },
+  ...(isCI
+    ? {}
+    : {
+        webServer: {
+          command: "npm run dev",
+          url: baseURL,
+          reuseExistingServer: !isCI,
+        },
+      }),
 });
-
-

@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Overview
 
-## Getting Started
+This repository implements the **Paginated DataList** take-home assignment using:
 
-First, run the development server:
+- Next.js (App Router, TypeScript)
+- TailwindCSS
+- Vitest + React Testing Library (unit & integration)
+- Playwright (E2E)
+- Docker (multi-stage build) and GitHub Actions CI
+
+The main feature is a `<DataList>` component that:
+
+- Fetches a large user dataset from the DummyJSON custom endpoint
+- Paginates it client-side with **20 users per page**
+- Displays **Full Name, Job, Address** for each user
+- Provides accessible Previous/Next pagination controls
+
+## Getting Started (Local Development)
+
+Install dependencies:
+
+```bash
+npm ci
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000` to view the app. The main page is implemented in `app/page.tsx` and renders the `DataList` feature.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+By default, the app reads from the DummyJSON URL:
 
-## Learn More
+```bash
+NEXT_PUBLIC_USERS_API_URL=https://dummyjson.com/c/81a3-7acb-406a-8571
+```
 
-To learn more about Next.js, take a look at the following resources:
+You can override it by defining `NEXT_PUBLIC_USERS_API_URL` in a local `.env` file.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Testing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Unit & Integration Tests (Vitest)
 
-## Deploy on Vercel
+Run all unit and integration tests:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm test
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Key coverage:
+
+- `lib/pagination.ts` via `tests/unit/pagination.test.ts`
+  - Page boundaries, invalid inputs, and total pages calculation
+- `components/data-list/DataList.tsx` via `tests/integration/DataList.integration.test.tsx`
+  - Mocks `fetch` for:
+    - Successful API response (loading → success, 20 items per page, correct formatting of name/job/address, working pagination)
+    - Failed API response (loading → error state)
+
+### End-to-End Tests (Playwright)
+
+Locally, Playwright can manage the dev server for you:
+
+```bash
+npm run test:e2e
+```
+
+The E2E test (`e2e/dataList.spec.ts`):
+
+- Visits `/`
+- Waits for `data-testid="user-card"` elements
+- Asserts **20** user cards are visible
+- Captures the first user name, clicks **Next page**, and asserts:
+  - There are still 20 cards
+  - The first user name has changed (indicating page 2 data)
+
+## Docker
+
+This project includes a multi-stage Dockerfile that produces a small production image using Next.js **standalone** output.
+
+Build the image:
+
+```bash
+docker build -t proxet-app .
+```
+
+Run the container:
+
+```bash
+docker run --rm -p 3000:3000 proxet-app
+```
+
+Then open `http://localhost:3000` in your browser.
+
+## Continuous Integration (GitHub Actions)
+
+The workflow in `.github/workflows/ci.yml` runs on pushes and pull requests and has two jobs:
+
+- **unit_integration_tests**
+  - Installs dependencies with `npm ci`
+  - Runs `npm run lint`
+  - Runs `npm test` (Vitest unit + integration)
+
+- **e2e_docker_tests**
+  - Builds the Docker image (`proxet-app`)
+  - Creates a Docker network and runs the app container
+  - Waits for the app to be healthy
+  - Runs Playwright tests in the official Playwright Docker image against the running app
+  - Cleans up containers and network
+
+This provides an automated, containerized pipeline that validates:
+
+- API interaction and pagination logic
+- Successful data flow from the API through the UI
+- E2E behavior of the paginated DataList feature
