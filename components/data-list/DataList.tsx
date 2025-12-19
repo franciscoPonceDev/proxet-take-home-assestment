@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { PAGE_SIZE, getTotalPages, paginateItems } from "@/lib/pagination";
 import { useUsersData } from "./useUsersData";
+import { UserCard } from "./UserCard";
+import { PaginationControls } from "./PaginationControls";
 
 export const DataList = () => {
   const { users, isLoading, error, retry } = useUsersData();
@@ -72,56 +74,18 @@ export const DataList = () => {
           <li
             key={user.id}
             data-testid="user-card"
-            className="rounded border border-slate-200 bg-white px-4 py-3 text-left shadow-sm"
           >
-            <div className="font-medium text-slate-900">
-              {user.name.first}{" "}
-              {user.name.middle ? `${user.name.middle} ` : ""}
-              {user.name.last}
-            </div>
-            <div className="text-sm text-slate-700">
-              {user.job.title} at {user.job.company}
-            </div>
-            <div className="mt-1 text-xs text-slate-500">
-              {user.location.street}, {user.location.city},{" "}
-              {user.location.state}, {user.location.country},{" "}
-              {user.location.zip}
-            </div>
+            <UserCard user={user} />
           </li>
         ))}
       </ul>
 
-      <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-          disabled={currentPage <= 1}
-          aria-label="Previous page"
-          aria-disabled={currentPage <= 1}
-          className="rounded border border-slate-300 px-3 py-1 text-sm font-medium text-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span className="text-sm text-slate-700">
-          Page {currentPage} of {totalPages || 1}
-        </span>
-        <button
-          type="button"
-          onClick={() =>
-            setCurrentPage((page) =>
-              page < totalPages ? page + 1 : page
-            )
-          }
-          disabled={currentPage >= totalPages}
-          aria-label="Next page"
-          aria-disabled={currentPage >= totalPages}
-          className="rounded border border-slate-300 px-3 py-1 text-sm font-medium text-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </section>
   );
 };
-
 
