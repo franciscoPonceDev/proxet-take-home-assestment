@@ -58,7 +58,7 @@ jobs:
         run: |
           set -e
           for i in {1..30}; do
-            if curl -s http://proxet-app:3000 > /dev/null 2>&1; then
+            if docker exec proxet-app curl -s http://localhost:3000 > /dev/null 2>&1; then
               echo "Application is up"
               exit 0
             fi

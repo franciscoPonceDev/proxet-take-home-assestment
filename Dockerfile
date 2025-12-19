@@ -26,9 +26,12 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
 
 RUN addgroup -g 1001 nodejs \
-  && adduser -S -u 1001 nextjs
+  && adduser -S -u 1001 nextjs \
+  && apk add --no-cache curl
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
@@ -37,8 +40,6 @@ COPY --from=builder /app/.next/static ./.next/static
 USER nextjs
 
 EXPOSE 3000
-ENV PORT=3000
-ENV HOST=0.0.0.0
 
 CMD ["node", "server.js"]
 
